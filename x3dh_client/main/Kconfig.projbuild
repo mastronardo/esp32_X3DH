@@ -1,0 +1,13 @@
+choice ACTOR_SELECTION
+    prompt "Select X3DH Actor"
+    default ACTOR_IS_ALICE
+    help
+        Select which actor (Alice or Bob) this firmware should run as.
+        You will need to flash two separate ESP32s, one for each.
+
+    config ACTOR_IS_ALICE      
+        bool "Run as Alice"
+
+    config ACTOR_IS_BOB        
+        bool "Run as Bob"
+endchoice
