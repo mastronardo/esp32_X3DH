@@ -1,0 +1,8 @@
+.DS_Store
+.vscode/
+build/
+managed_components/
+sdkconfig
+*.lock
+*.old
+server-data/
