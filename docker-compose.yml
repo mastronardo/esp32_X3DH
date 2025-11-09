@@ -1,0 +1,35 @@
+networks:
+  net:
+    driver: bridge
+
+services:
+  server:
+    image: flask-server:latest
+    container_name: x3dh_server
+    build: ./server
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./server/server-data:/app/data
+    networks:
+      - net
+    tty: true
+
+  sqlitebrowser:
+    image: linuxserver/sqlitebrowser:3.13.1
+    container_name: sqlite_browser
+    environment:
+      - PUID=1000
+      - GUID=1000
+      - TZ=Europe/Rome
+    volumes:
+      - ./server/server-data:/config
+    ports:
+      - 3000:3000
+      - 3001:3001
+    shm_size: "1gb"
+    restart: unless-stopped
+    networks:
+      - net
+    depends_on:
+      - server
