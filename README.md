@@ -55,7 +55,7 @@ If you are using macOS and you cannot see the ESP32 serial port after connecting
 ```bash
 git clone https://github.com/mastronardo/esp32_X3DH.git
 cd esp32_X3DH
-chmod +x sart_service.sh
+chmod +x sart_service.sh stop_service.sh down_service.sh
 ```
 
 ### Server
@@ -70,30 +70,32 @@ cd esp32_X3DH/server
 sudo docker build -t flask-server:latest .
 ```
 
-### Client
+```bash
+# Build all the containers and start the service.
+# Wait until the server is fully started.
+./sart_service.sh
+```
 
+```bash
+# To stop the service
+./stop_service.sh
+```
+
+```bash
+# To stop and delete containers, networks and volumes
+./down_service.sh
+```
+
+
+### Client
+The first step is to set up the ESP-IDF environment. You can follow the official guide [here](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/index.html). After that, navigate to the esp project directory (`x3dh_client`) and set the target to your MCU module (in this case `esp32`):
 ```bash
 cd esp32_X3DH/x3dh_client
 get_idf
 idf.py set-target esp32
-idf.py menuconfig
 ```
 
-Inside the `menuconfig`, set the following parameters to allow the binary executable file to fit inside the flash memory, and to avoid the buffer overflow issue:
-- `(Top)` ---> `Partition Table` ---> `Partition Table` ---> `Two large size OTA partitions`
-- `(Top)` ---> `Serial Flasher Config` ---> `Flash size` ---> `4MB`
-- `(Top)` ---> `Component config` ---> `Main task stack size` ---> `8192`
-
-set also this one to enable the HKDF algorithm needed for X3DH:
-- `(Top)` ---> `Component config` ---> `mbedTLS` ---> `HKDF algorithm (RFC 5869)`
-
-<br>
-
-With `Kconfig.projbuild` we generate a new section inside the `menuconfig` called `Select X3DH Actor`, where the user can choose which X3DH Actor to compile the client for: `Run as Alice`, `Run as Bob`.
-
-<br>
-
-The `libsodium` and `cjson` components are present in the ESP Component Registry, so we can add them to the project by running the following commands:
+Now we can add the components that present in the ESP Component Registry. We can simply run the following commands to add the required dependencies for this project:
 ```bash
 idf.py add-dependency "libsodium"
 idf.py add-dependency "cjson"
@@ -108,6 +110,22 @@ After that, you need to modify the `CMakeLists.txt`, `ref10/CMakeLists.txt`, `re
 
 <br>
 
+Instead of opening every time the `menuconfig` to set the right parameters for this project, I created a `sdkconfig.defaults` file that will be automatically generate the `sdkconfig` file when you open the `menuconfig`.
+The parameters mentioned above are as follows:
+- `(Top)` ---> `Partition Table` ---> `Partition Table` ---> `Two large size OTA partitions`
+- `(Top)` ---> `Serial Flasher Config` ---> `Flash size` ---> `4MB`
+- `(Top)` ---> `Component config` ---> `Main task stack size` ---> `8192`
+- `(Top)` ---> `Component config` ---> `mbedTLS` ---> `HKDF algorithm (RFC 5869)`
+
+The first three parameters are necessary to make sure that the client binary executable file will fit inside the flash memory of the ESP32, and to avoid the buffer overflow issue when running the project.
+The last one is needed to enable the HKDF algorithm required by the X3DH Key Agreement Protocol.
+
+<br>
+
+With `Kconfig.projbuild` we generate a new section inside the `menuconfig` called `Select X3DH Actor`, where the user can choose which X3DH Actor to compile the client for: `Run as Alice`, `Run as Bob`.
+
+<br>
+
 Since that we are going to store the keys in the NVS memory of the ESP32, it is recommended to erase the flash:
 1. before flashing the client for the first time,
 2. whenever you change the X3DH Actor,
@@ -117,10 +135,8 @@ idf.py -p PORT erase-flash
 ```
 
 ## How to use it
-1. Start the server:
+1. Start the containers:
 ```bash
-# Build all the containers and start the service.
-# Wait until the service is fully started.
 ./sart_service.sh
 ```
 To visit the `SQLite Browser`, open your web browser and go to `http://localhost:3000`.
@@ -135,4 +151,4 @@ idf.py -p PORT build flash monitor
 
 3. The client will firstly connect to WiFi, and after that the `app_main.c` will print the menu with the available options to perform the X3DH Key Agreement Protocol as `Alice` or `Bob`.
 
-<img align="left" width="40%" src="docs/alice-menu.png"><img align="right" width="45%" src="docs/bob-menu.png">
+<img align="left" width="42%" src="docs/alice-menu.png"><img align="right" width="45%" src="docs/bob-menu.png">
