@@ -9,14 +9,14 @@ A C implementation of the X3DH Key Agreement Protocol for esp32 (as a client), w
 - RAM : 8 GB
 - Python: 3.12.10 (at least 3.9)
 - clang: 17.0.0
-- cmake: 4.1.2 (at least 3.16)
-- ninja: 1.13.1
+- cmake: 4.1.3 (at least 3.16)
+- ninja: 1.13.2
 - ccache: 4.12.1
-- git: 2.51.2
+- git: 2.52.0
 - dfu-util: 0.11
 - Command Line Tools for Xcode: 26.1
-- Docker Desktop: 4.51.0
-  - Docker version: 28.5.2
+- Docker Desktop: 4.52.0
+  - Docker version: 29.0.1
   - Docker compose: 2.40.3
 
 `Containers`'s specifications:
