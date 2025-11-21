@@ -4,7 +4,7 @@
 #include <cJSON.h>
 
 // Change this to the IP address of your server
-#define SERVER_URL "http://<YOUR_IP_ADDRESS>:5001"
+#define SERVER_URL "http://<SERVER_IP_ADDRESS>:5001"
 
 // Struct to hold the response from an HTTP request
 typedef struct {

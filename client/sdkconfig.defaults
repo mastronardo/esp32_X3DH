@@ -1,6 +1,7 @@
 #
 # Default sdkconfig to allow the compiled program (.bin files) to fit inside the ESP32's flash memory,
 # to avoid the buffer overflow issue, and to enable the MbedTLS HKDF algorithm
+#
 # Espressif IoT Development Framework (ESP-IDF) 5.5.1 Project Configuration
 #
 CONFIG_SOC_CAPS_ECO_VER_MAX=301
